@@ -75,7 +75,7 @@ srcPort=os.environ['PORT_SRC']
 # jmtoPort='3306' 
 
 
-driverSQL="{ODBC Driver 17 for SQL Server};"
+# driverSQL="{ODBC Driver 17 for SQL Server};"
 # srcHost="192.168.41.25;"
 # srcUser="jm;"
 # srcPass="1ntegr@s1;"
