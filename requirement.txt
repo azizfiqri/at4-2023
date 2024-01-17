@@ -1,0 +1,5 @@
+pandas
+psycopg2-binary
+mysql-connector-python
+pymysql==0.7.6
+apscheduler
