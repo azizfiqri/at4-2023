@@ -51,7 +51,10 @@ def data_miypcds():
              "RpDki,"
              "RpFlo1 + RpFlo2 AS RpFlo,"
              "RpKary,"
-             "RpMit "
+             "RpMit,"
+             "Lolos,"
+             "Indamal,"
+             "Majumundur "
              "from view_lalin_at4_2023 ORDER BY Tanggal asc"
         )
         # print (f" query = {query_sql}")
@@ -149,6 +152,9 @@ def InsertresultData(resultData):
                 RpeFlo = x[20]
                 RpDinasKary = x[21]
                 RpDinasMitra = x[22]
+                Lolos = x[23]
+                Indamal = x[24]
+                Mjmdr = x[25]
                 query_data = (
                 "Insert INTO jid_rekap_at4_2023("
                 "IdGerbang,"
@@ -173,10 +179,13 @@ def InsertresultData(resultData):
                 "RpeDKI,"
                 "RpeFlo,"
                 "RpDinasKary,"
-                "RpDinasMitra )"                
+                "RpDinasMitra,"
+                "Lolos,"
+                "Indamal,"
+                "Mjmdr)"                
                 "VALUES ("
                 f'{IdGerbang},"{Tanggal}",{shift},{IdAsalGerbang},{Tunai},{eMandiri},{eBri},{eBni},{eBca},{eDKI},{eFlo},' 
-                f'{DinasOpr},{DinasMitra},{DinasKary},{RpTunai},{RpeMandiri},{RpeBri},{RpeBni},{RpeBca},{RpeDKI},{RpeFlo},{RpDinasKary},{RpDinasMitra})'   
+                f'{DinasOpr},{DinasMitra},{DinasKary},{RpTunai},{RpeMandiri},{RpeBri},{RpeBni},{RpeBca},{RpeDKI},{RpeFlo},{RpDinasKary},{RpDinasMitra},{Lolos},{Indamal},{Mjmdr})'   
                 "ON DUPLICATE KEY UPDATE " \
                 f"IdGerbang = {IdGerbang},"
                 f"Tanggal = '{Tanggal}',"
@@ -200,7 +209,10 @@ def InsertresultData(resultData):
                 f"RpeDKI = {RpeDKI},"
                 f"RpeFlo = {RpeFlo},"
                 f"RpDinasKary = {RpDinasKary},"
-                f"RpDinasMitra = {RpDinasMitra};" 
+                f"RpDinasMitra = {RpDinasMitra},"
+                f"Lolos = {Lolos},"
+                f"Indamal = {Indamal},"
+                f"Mjmdr = {Mjmdr};" 
                 )  
                 # print (f"Insert : {query_data}" )        
                 cnxmyjmto = mysql.connector.connect(
