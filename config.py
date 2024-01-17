@@ -42,6 +42,7 @@ srcPass=os.environ['PASS_SRC']
 srcDb=os.environ['DB_SRC']
 srcPort=os.environ['PORT_SRC']
 
+<<<<<<< HEAD
 # configMode='30'
 # idGerbang='37'
 # namaGerbang='Cikatama'
@@ -81,3 +82,5 @@ srcPort=os.environ['PORT_SRC']
 # srcPass="1ntegr@s1;"
 # srcDb="master;"
 # srcPort="1433;"
+=======
+>>>>>>> 9cc1512e7e2d4648be9a11f12c5b13883b7ddbcf
