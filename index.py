@@ -159,18 +159,27 @@ def main():
             logging.info("Data Source dengan Mediasi berbeda")
             logging.info("Proses Sync Data")
             insertDataRekap()
+    elif config.configMode == '60':
+        # resdataDB = integrator.delameta.compare_data_delameta()
+        # resdataMediasi = integrator.mediasi.compare_data_mediasi()
+        # if resdataDB == resdataMediasi:
+        #     logging.info("Data Source dengan Data Server Mediasi Sama")
+        # else:
+        #     logging.info("Data Source dengan Mediasi berbeda")
+        #     logging.info("Proses Sync Data")
+            insertDataRekap()
     else:
         logging.info("--")
     
 if __name__ == '__main__': 
     main()
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(main, 'interval', minutes= 240)
-    scheduler.start()
-    try:
-        # This is here to simulate application activity (which keeps the main thread alive).
-        while True:
-            time.sleep(2)
-    except (KeyboardInterrupt, SystemExit):
-        # Not strictly necessary if daemonic mode is enabled but should be done if possible
-        scheduler.shutdown()
+    # scheduler = BackgroundScheduler()
+    # scheduler.add_job(main, 'interval', minutes= 240)
+    # scheduler.start()
+    # try:
+    #     # This is here to simulate application activity (which keeps the main thread alive).
+    #     while True:
+    #         time.sleep(2)
+    # except (KeyboardInterrupt, SystemExit):
+    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
+    #     scheduler.shutdown()
