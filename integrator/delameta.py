@@ -22,7 +22,7 @@ def data_delameta():
         query_delameta = (
             "Select "
             "a.id, a.transaksi,a.lolos,a.pendapatan,b.transaksi AS Transaksi_etoll, b.pendapatan AS Pendapatan_etoll "
-            f"from bali.{config.namaGerbang}.tblshifttrno a, bali.{config.namaGerbang}.tblshiftetolltrno b WHERE (a.id=b.id) limit 1"
+            f'from "{config.srcDb}".dbsharejmto.tblshift_trno_db{config.namaGerbang}_2023 a, "{config.srcDb}".dbsharejmto.tblshiftetoll_trno_db{config.namaGerbang}_2023 b WHERE (a.id=b.id) limit 5'
         )
         print (f"Query : {query_delameta}")
         cursor_data.execute(query_delameta)
@@ -48,20 +48,15 @@ def compare_data_delameta():
         query_delameta = (
             "Select "
             "a.id, a.transaksi,a.lolos,a.pendapatan,b.transaksi AS Transaksi_etoll, b.pendapatan AS Pendapatan_etoll "
-            f"from {config.srcDb}.{config.namaGerbang}.tblshifttrno a, {config.srcDb}.{config.namaGerbang}.tblshiftetolltrno b WHERE (a.id=b.id)"
+            f'from "{config.srcDb}".dbsharejmto.tblshift_trno_db{config.namaGerbang}_2023 a, "{config.srcDb}".dbsharejmto.tblshiftetoll_trno_db{config.namaGerbang}_2023 b WHERE (a.id=b.id)'
         )
         # print (f"query {query_delameta}")
         cursor_compare.execute(query_delameta)
         data = pd.DataFrame(cursor_compare.fetchall())
-        # print (data)
-        # print (f"id 0 0: {data[0][0]}")
-        # print (f"transaksi 1 0: {data[1][0]}")
-        # print (f"lolos: {data[2][0]}")
-        # print (f"pendapatan: {data[3][0][3]}")
         rc = cursor_compare.rowcount
         logging.info("JUMLAH DATA Rekap : " + str(rc))
         compareDelameta = data.values.tolist()
-        print (f"rekap data {compareDelameta}")
+        # print (f"rekap data {compareDelameta}")
         cnxdb_compare.close()
         return compareDelameta
     
@@ -73,14 +68,18 @@ def InsertresultData(resultData):
         if config.configMode == '60': #DELAMETA 
             count = 0 
             for x in resultData:
-                print (x)
+                # print (x)
                 resID= x[0]
+                hari = resID[1:3]
+                bulan = resID[3:5]
+                tahun = resID[5:7]
+                Tanggal = str(tahun) + str(bulan) + str(hari)
+                Shift = resID[0:1]
                 IdGerbang = config.idGerbang
                 IdAsalGerbang = 0
                 if IdAsalGerbang == '':
                    IdAsalGerbang = 0
-                Tanggal = resID[1:7]
-                Shift = resID[0:1]
+
                 resTransaksiTunai = x[1][0]
                 tunaiGol1 = resTransaksiTunai[0]
                 tunaiGol2 = resTransaksiTunai[1]
@@ -89,7 +88,7 @@ def InsertresultData(resultData):
                 tunaiGol5 = resTransaksiTunai[4]
                 tunaiGol6 = resTransaksiTunai[5]
                 totalTunai = tunaiGol1 + tunaiGol2 + tunaiGol3 + tunaiGol4 + tunaiGol5 + tunaiGol6
-                print (f"Tunai Lalin : {tunaiGol1} + {tunaiGol2} + {tunaiGol3} + {tunaiGol4} + {tunaiGol5} + {tunaiGol6} = {totalTunai}")
+                # print (f"Tunai Lalin : {tunaiGol1} + {tunaiGol2} + {tunaiGol3} + {tunaiGol4} + {tunaiGol5} + {tunaiGol6} = {totalTunai}")
                 resTransaksiMandiri = x[4][0]
                 mandiriGol1 = resTransaksiMandiri[0]
                 mandiriGol2 = resTransaksiMandiri[1]
@@ -98,7 +97,7 @@ def InsertresultData(resultData):
                 mandiriGol5 = resTransaksiMandiri[4]
                 mandiriGol6 = resTransaksiMandiri[5]
                 totalMandiri = mandiriGol1 + mandiriGol2 + mandiriGol3 + mandiriGol4 + mandiriGol5 + mandiriGol6
-                print (f"total Mandiri = {mandiriGol1} + {mandiriGol2} + {mandiriGol3} + {mandiriGol4} + {mandiriGol5} + {mandiriGol6} = {totalMandiri}")
+                # print (f"total Mandiri = {mandiriGol1} + {mandiriGol2} + {mandiriGol3} + {mandiriGol4} + {mandiriGol5} + {mandiriGol6} = {totalMandiri}")
                 resTransaksiBri = x[4][1]
                 briGol1 = resTransaksiBri[0]
                 briGol2 = resTransaksiBri[1]
@@ -107,7 +106,7 @@ def InsertresultData(resultData):
                 briGol5 = resTransaksiBri[4]
                 briGol6 = resTransaksiBri[5]
                 totalBri = briGol1 + briGol2 + briGol3 + briGol4 + briGol5 + briGol6
-                print (f"total Bri = {briGol1} + {briGol2} + {briGol3} + {briGol4} + {briGol5} + {briGol6} = {totalBri}")
+                # print (f"total Bri = {briGol1} + {briGol2} + {briGol3} + {briGol4} + {briGol5} + {briGol6} = {totalBri}")
                 resTransaksiBni = x[4][2]
                 bniGol1 = resTransaksiBni[0]
                 bniGol2 = resTransaksiBni[1]
@@ -116,7 +115,7 @@ def InsertresultData(resultData):
                 bniGol5 = resTransaksiBni[4]
                 bniGol6 = resTransaksiBni[5]
                 totalBni = bniGol1 + bniGol2 + bniGol3 + bniGol4 + bniGol5 + bniGol6
-                print (f"total Bni = {bniGol1} + {bniGol2} + {bniGol3} + {bniGol4} + {bniGol5} + {bniGol6} = {totalBni}")
+                # print (f"total Bni = {bniGol1} + {bniGol2} + {bniGol3} + {bniGol4} + {bniGol5} + {bniGol6} = {totalBni}")
                 resTransaksiBca = x[4][3]
                 bcaGol1 = resTransaksiBca[0]
                 bcaGol2 = resTransaksiBca[1]
@@ -125,8 +124,8 @@ def InsertresultData(resultData):
                 bcaGol5 = resTransaksiBca[4]
                 bcaGol6 = resTransaksiBca[5]
                 totalBca = bcaGol1 + bcaGol2 + bcaGol3 + bcaGol4 + bcaGol5 + bcaGol6
-                print (f"total Bca = {bcaGol1} + {bcaGol2} + {bcaGol3} + {bcaGol4} + {bcaGol5} + {bcaGol6} = {totalBca}")
-                resTransaksiDki = x[4][3]
+                # print (f"total Bca = {bcaGol1} + {bcaGol2} + {bcaGol3} + {bcaGol4} + {bcaGol5} + {bcaGol6} = {totalBca}")
+                resTransaksiDki = x[4][4]
                 dkiGol1 = resTransaksiDki[0]
                 dkiGol2 = resTransaksiDki[1]
                 dkiGol3 = resTransaksiDki[2]
@@ -134,7 +133,7 @@ def InsertresultData(resultData):
                 dkiGol5 = resTransaksiDki[4]
                 dkiGol6 = resTransaksiDki[5]
                 totalDki = dkiGol1 + dkiGol2 + dkiGol3 + dkiGol4 + dkiGol5 + dkiGol6
-                print (f"total DKI = {dkiGol1} + {dkiGol2} + {dkiGol3} + {dkiGol4} + {dkiGol5} + {dkiGol6} = {totalDki}")
+                # print (f"total DKI = {dkiGol1} + {dkiGol2} + {dkiGol3} + {dkiGol4} + {dkiGol5} + {dkiGol6} = {totalDki}")
                 resTransaksiFlo = x[1][1]
                 floGol1 = resTransaksiFlo[0]
                 floGol2 = resTransaksiFlo[1]
@@ -143,7 +142,7 @@ def InsertresultData(resultData):
                 floGol5 = resTransaksiFlo[4]
                 floGol6 = resTransaksiFlo[5]
                 totalFlo = floGol1 + floGol2 + floGol3 + floGol4 + floGol5 + floGol6
-                print (f"total FLO = {floGol1} + {floGol2} + {floGol3} + {floGol4} + {floGol5} + {floGol6} = {totalFlo}")
+                # print (f"total FLO = {floGol1} + {floGol2} + {floGol3} + {floGol4} + {floGol5} + {floGol6} = {totalFlo}")
                 resTransaksiDinas = x[1][3]
                 DinasGol1 = resTransaksiDinas[0]
                 DinasGol2 = resTransaksiDinas[1]
@@ -152,7 +151,7 @@ def InsertresultData(resultData):
                 DinasGol5 = resTransaksiDinas[4]
                 DinasGol6 = resTransaksiDinas[5]
                 totalDinas = DinasGol1 + DinasGol2 + DinasGol3 + DinasGol4 + DinasGol5 + DinasGol6
-                print (f"total Dinas = {DinasGol1} + {DinasGol2} + {DinasGol3} + {DinasGol4} + {DinasGol5} + {DinasGol6} = {totalDinas}")
+                # print (f"total Dinas = {DinasGol1} + {DinasGol2} + {DinasGol3} + {DinasGol4} + {DinasGol5} + {DinasGol6} = {totalDinas}")
                 resPendapatanTunai = x[3]
                 tunaiPendapatanGol1 = resTransaksiTunai[0]
                 tunaiPendapatanGol2 = resPendapatanTunai[1]
@@ -160,22 +159,22 @@ def InsertresultData(resultData):
                 tunaiPendapatanGol4 = resPendapatanTunai[3]
                 tunaiPendapatanGol5 = resPendapatanTunai[4]
                 tunaiPendapatanGol6 = resPendapatanTunai[5]
-                totalPendapatanTunai = tunaiPendapatanGol1 + tunaiPendapatanGol2 + tunaiPendapatanGol3 + tunaiPendapatanGol4 + tunaiPendapatanGol5 + tunaiPendapatanGol6
-                print (f"Tunai Pendapatan Tunai : {tunaiPendapatanGol1} + {tunaiPendapatanGol2} + {tunaiPendapatanGol3} + {tunaiPendapatanGol4} + {tunaiPendapatanGol5} + {tunaiPendapatanGol6} = {totalPendapatanTunai}")
-                resPendapatanMandiri = x[5][0]
-                print (f'pendapatan mandiri : {resPendapatanMandiri}')
-                totalPendapatanBri = x[5][1]
-                print (f"Bri Pendapatan Bri : {totalPendapatanBri}")
-                totalPendapatanBni = x[5][2]
-                print (f"Bni Pendapatan Bni : {totalPendapatanBni}")
-                totalPendapatanBca = x[5][3]
-                print (f"Bca Pendapatan Bca : {totalPendapatanBca}")
-                totalPendapatanDki = x[5][4]
-                print (f"Dki Pendapatan Dki : {totalPendapatanDki}")
-                totalPendapatanFlo = x[5][3]
-                print (f"Flo Pendapatan Flo : {totalPendapatanFlo}")
-                resPendapatanDinas = x[3][1]
-                print (f"Dinas Pendapatan Dinas : {resPendapatanDinas}")
+                RpTunai = tunaiPendapatanGol1 + tunaiPendapatanGol2 + tunaiPendapatanGol3 + tunaiPendapatanGol4 + tunaiPendapatanGol5 + tunaiPendapatanGol6
+                # print (f"Tunai Pendapatan Tunai : {tunaiPendapatanGol1} + {tunaiPendapatanGol2} + {tunaiPendapatanGol3} + {tunaiPendapatanGol4} + {tunaiPendapatanGol5} + {tunaiPendapatanGol6} = {RpTunai}")
+                RpeMandiri = x[5][0]
+                # print (f'pendapatan mandiri : {RpeMandiri}')
+                RpeBri = x[5][1]
+                # print (f"Bri Pendapatan Bri : {RpeBri}")
+                RpeBni = x[5][2]
+                # print (f"Bni Pendapatan Bni : {RpeBni}")
+                RpeBca = x[5][3]
+                # print (f"Bca Pendapatan Bca : {RpeBca}")
+                RpeDki = x[5][4]
+                # print (f"Dki Pendapatan Dki : {RpeDki}")
+                RpeFlo = x[3][1]
+                # print (f"Flo Pendapatan Flo : {RpeFlo}")
+                RpeDinas = x[3][3]
+                # print (f"Dinas Pendapatan Dinas : {RpeDinas}")
                 Lolos = x[2]
                 query_data = (
                 "Insert INTO jid_rekap_at4_2023("
@@ -207,7 +206,7 @@ def InsertresultData(resultData):
                 "Mjmdr)"                
                 "VALUES ("
                 f'{IdGerbang},"{Tanggal}",{Shift},{IdAsalGerbang},{totalTunai},{totalMandiri},{totalBri},{totalBni},{totalBca},{totalDki},{totalFlo},' 
-                # f'{totalDinas},0,0,{RpTunai},{RpeMandiri},{RpeBri},{RpeBni},{RpeBca},{RpeDKI},{RpeFlo},{RpDinasKary},{RpDinasMitra},{Lolos},{Indamal},{Mjmdr})'   
+                f'{totalDinas},0,0,{RpTunai},{RpeMandiri},{RpeBri},{RpeBni},{RpeBca},{RpeDki},{RpeFlo},{RpeDinas},{RpeDinas},{Lolos},0,0)'   
                 "ON DUPLICATE KEY UPDATE " \
                 f"IdGerbang = {IdGerbang},"
                 f"Tanggal = '{Tanggal}',"
@@ -223,30 +222,30 @@ def InsertresultData(resultData):
                 f"DinasOpr = {totalDinas},"
                 f"DinasMitra = 0," 
                 f"DinasKary = 0,"
-                # f"RpTunai = {RpTunai}," 
-                # f"RpeMandiri = {RpeMandiri}," 
-                # f"RpeBri = {RpeBri},"
-                # f"RpeBni = {RpeBni},"
-                # f"RpeBca = {RpeBca},"
-                # f"RpeDKI = {RpeDKI},"
-                # f"RpeFlo = {RpeFlo},"
-                # f"RpDinasKary = {RpDinasKary},"
-                # f"RpDinasMitra = {RpDinasMitra},"
-                # f"Lolos = {Lolos},"
-                # f"Indamal = {Indamal},"
-                # f"Mjmdr = {Mjmdr};" 
+                f"RpTunai = {RpTunai}," 
+                f"RpeMandiri = {RpeMandiri}," 
+                f"RpeBri = {RpeBri},"
+                f"RpeBni = {RpeBni},"
+                f"RpeBca = {RpeBca},"
+                f"RpeDKI = {RpeDki},"
+                f"RpeFlo = {RpeFlo},"
+                f"RpDinasKary = {RpeDinas},"
+                f"RpDinasMitra = {RpeDinas},"
+                f"Lolos = {Lolos},"
+                f"Indamal = 0,"
+                f"Mjmdr = 0;" 
                 )  
-                # print (f"Insert : {query_data}" )        
-                # cnxmyjmto = mysql.connector.connect(
-                # user= config.jmtoUser, 
-                # password= config.jmtoPass, 
-                # host= config.jmtoHost, 
-                # database= config.jmtoDb)              
-                # cursorjmto = cnxmyjmto.cursor()
-                # cursorjmto.execute(query_data)
-                # cnxmyjmto.commit()
-                # count += 1   
-                # cnxmyjmto.close()
+                print (f"Insert : {query_data}" )        
+                cnxmyjmto = mysql.connector.connect(
+                user= config.jmtoUser, 
+                password= config.jmtoPass, 
+                host= config.jmtoHost, 
+                database= config.jmtoDb)              
+                cursorjmto = cnxmyjmto.cursor()
+                cursorjmto.execute(query_data)
+                cnxmyjmto.commit()
+                count += 1   
+                cnxmyjmto.close()
             logging.info(F"JUMLAH RECORD INSERT DATA REKAP (MEDIASI) : {count} ")
                 
         else:

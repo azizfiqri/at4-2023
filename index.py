@@ -160,13 +160,13 @@ def main():
             logging.info("Proses Sync Data")
             insertDataRekap()
     elif config.configMode == '60':
-        # resdataDB = integrator.delameta.compare_data_delameta()
-        # resdataMediasi = integrator.mediasi.compare_data_mediasi()
-        # if resdataDB == resdataMediasi:
-        #     logging.info("Data Source dengan Data Server Mediasi Sama")
-        # else:
-        #     logging.info("Data Source dengan Mediasi berbeda")
-        #     logging.info("Proses Sync Data")
+        resdataDB = integrator.delameta.compare_data_delameta()
+        resdataMediasi = integrator.mediasi.compare_data_mediasi()
+        if resdataDB == resdataMediasi:
+            logging.info("Data Source dengan Data Server Mediasi Sama")
+        else:
+            logging.info("Data Source dengan Mediasi berbeda")
+            logging.info("Proses Sync Data")
             insertDataRekap()
     else:
         logging.info("--")

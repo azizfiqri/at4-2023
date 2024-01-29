@@ -10,7 +10,7 @@ import config
 import sys
 
 
-def data_miypcds():
+def dataRekap_miypcds():
     if config.configMode == '20' or config.configMode == '23':
             cnxdb_miy_pcds = pymysql.connect(
                 host=config.srcHost,
@@ -62,16 +62,63 @@ def data_miypcds():
         data = pd.DataFrame(cursorsql.fetchall())
         rc = cursorsql.rowcount
         logging.info(f"JUMLAH RECORD DATA REKAP (MIY) : {rc}")
-        data_miypcds = data.values.tolist()
+        dataRekap_miypcds = data.values.tolist()
         # print ('res :' + str(dataMIY10))
         cursorsql.close()
         cnxdb_miy_pcds.close()
-        return data_miypcds
+        return dataRekap_miypcds
     
     except Exception as e:
         logging.error("ERROR GET DATA MIY :" + e)  
 
-def compare_data_miypcds():
+def dataPendapatan_miypcds():
+    if config.configMode == '20' or config.configMode == '23':
+            cnxdb_miy_pcds = pymysql.connect(
+                host=config.srcHost,
+                user=config.srcUser,
+                password=config.srcPass,
+                database=config.srcDb,
+                cursorclass=pymysql.cursors.DictCursor)
+
+    elif config.configMode == '30' or config.configMode == '33':
+            cnxdb_miy_pcds = mysql.connector.connect(
+                    host=config.srcHost,
+                    user=config.srcUser,
+                    password=config.srcPass,
+                    database=config.srcDb)
+    try:
+        cursorsql = cnxdb_miy_pcds.cursor()
+        query_sql =  (
+            "Select "
+            "GerbangId,"
+            "TanggalLaporan,"
+            "Shift,"
+            "IdInvestor,"
+            "NamaInvestor,"
+            "RpBagiHasilTunai,"
+            "RpBagiHasileTollMandiri,"
+            "RpBagiHasileTollBRI,"
+            "RpBagiHasileTollBNI,"
+            "RpBagiHasileTollBCA,"
+            "RpBagiHasileTollDKI,"
+            "RpBagiHasileTollFlo2 "
+            "from view_lalin_rekap_split_2023 ORDER BY Tanggal asc"
+        )
+        # print (f" query = {query_sql}")
+        cursorsql.execute(query_sql)
+        data = pd.DataFrame(cursorsql.fetchall())
+        rc = cursorsql.rowcount
+        logging.info(f"JUMLAH RECORD DATA Pendapatan (MIY) : {rc}")
+        dataPendapatan_miypcds = data.values.tolist()
+        # print ('res :' + str(dataMIY10))
+        cursorsql.close()
+        cnxdb_miy_pcds.close()
+        return dataPendapatan_miypcds
+    
+    except Exception as e:
+        logging.error("ERROR GET DATA MIY :" + e)  
+
+def compare_dataRekap_miypcds():
     try:
         if config.configMode == '20' or config.configMode == '23':
                 cnxdb_miy_pcds = pymysql.connect(
