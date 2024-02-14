@@ -7,8 +7,6 @@ import logging
 import pymysql.cursors
 import config
 
-
-
 def compare_data_mediasi():
     try:
         cnxmyjmto = mysql.connector.connect(

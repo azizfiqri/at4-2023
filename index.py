@@ -38,13 +38,13 @@ def insertDataRekap():
     result = 0
     try:
         if config.configMode == '30' or config.configMode == '20': #open - exit
-            result = integrator.miy.data_miypcds()   
-            integrator.miy.InsertresultData(result)
+            result = integrator.miy.dataRekap_miypcds()
+            integrator.miy.InsertresultDataRekap(result)
         elif config.configMode == '23': #entrance & exit            
-            resultentrance = integrator.miy.data_miypcds_ent()
-            integrator.miy.InsertresultData(resultentrance)    
-            resultexit = integrator.miy.data_miypcds()   
-            integrator.miy.InsertresultData(resultexit)      
+            resultentrance = integrator.miy.dataRekap_miypcds_ent()
+            integrator.miy.InsertresultDataRekap(resultentrance)    
+            resultexit = integrator.miy.dataRekap_miypcds()   
+            integrator.miy.InsertresultDataRekap(resultexit)      
         #DELAMETA
         elif config.configMode == '60': # open
             result = integrator.delameta.data_delameta()
@@ -90,12 +90,12 @@ def compare_insert_data():
     try:
         #MIY
         if config.configMode == '20' or config.configMode == '30' :
-            result = integrator.miy.compare_data_miypcds()
+            result = integrator.miy.compare_dataRekap_miypcds()
         elif config.configMode == '21' or config.configMode == '31' :
-            result = integrator.miy.compare_data_miypcds_ent() 
+            result = integrator.miy.compare_dataRekap_miypcds_ent() 
         elif config.configMode == '23' or config.configMode == '33' :
-            resultent = integrator.miy.compare_data_miypcds_ent() 
-            resultext = integrator.miy.compare_data_miypcds()
+            resultent = integrator.miy.compare_dataRekap_miypcds_ent() 
+            resultext = integrator.miy.compare_dataRekap_miypcds()
             result = resultent + resultext
         elif config.configMode == '40' or config.configMode == '50':
             result = integrator.miy.compare_data_miybcds()
@@ -150,8 +150,8 @@ def main():
     logging.info(f"CFG Mode : {config.configMode} ")
     logging.info(f"Gerbang : {config.namaGerbang} ({config.idGerbang})")
     db_jmto()
-    if config.configMode == '30' or  config.configMode == '20':
-        resdataMIY = integrator.miy.compare_data_miypcds()
+    if config.configMode == '30' or  config.configMode == '20': #Open
+        resdataMIY = integrator.miy.compare_dataRekap_miypcds()
         resdataMediasi = integrator.mediasi.compare_data_mediasi()
         if resdataMIY == resdataMediasi:
             logging.info("Data Source dengan Data Server Mediasi Sama")
@@ -159,7 +159,16 @@ def main():
             logging.info("Data Source dengan Mediasi berbeda")
             logging.info("Proses Sync Data")
             insertDataRekap()
-    elif config.configMode == '60':
+    elif config.configMode == '60' : #Open
+        resdataDB = integrator.delameta.compare_data_delameta()
+        resdataMediasi = integrator.mediasi.compare_data_mediasi()
+        if resdataDB == resdataMediasi:
+            logging.info("Data Source dengan Data Server Mediasi Sama")
+        else:
+            logging.info("Data Source dengan Mediasi berbeda")
+            logging.info("Proses Sync Data")
+            insertDataRekap()
+    elif config.configMode == '63' : #EXIT
         resdataDB = integrator.delameta.compare_data_delameta()
         resdataMediasi = integrator.mediasi.compare_data_mediasi()
         if resdataDB == resdataMediasi:
@@ -169,17 +178,17 @@ def main():
             logging.info("Proses Sync Data")
             insertDataRekap()
     else:
-        logging.info("--")
+        logging.info("NOT CONFIG")
     
 if __name__ == '__main__': 
     main()
-    # scheduler = BackgroundScheduler()
-    # scheduler.add_job(main, 'interval', minutes= 240)
-    # scheduler.start()
-    # try:
-    #     # This is here to simulate application activity (which keeps the main thread alive).
-    #     while True:
-    #         time.sleep(2)
-    # except (KeyboardInterrupt, SystemExit):
-    #     # Not strictly necessary if daemonic mode is enabled but should be done if possible
-    #     scheduler.shutdown()
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(main, 'interval', minutes= 240)
+    scheduler.start()
+    try:
+        # This is here to simulate application activity (which keeps the main thread alive).
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible
+        scheduler.shutdown()
